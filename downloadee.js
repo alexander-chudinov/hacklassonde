@@ -106,5 +106,3 @@ database.ref('rsaKey').on('value', function(snapshot){
     key2 = new NodeRSA(snapshot.val())
     console.log(key2.decrypt(encrypted, 'utf8'))
 })
-
-//const decrypted = fetchedKey.decrypt(encrypted, 'utf8')
