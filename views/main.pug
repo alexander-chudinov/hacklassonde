@@ -1,6 +1,6 @@
 h1 yeet
-button(onclick="didClickDownload()") Download
-h4 Email
-input(id="email" placeholder="user@test.com")
-script
-    include main.js
+form(action="/download", method="post")
+    p Email
+    input(id="email" name="email" placeholder="user@test.com")
+    br
+    input(type="submit")

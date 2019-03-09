@@ -5,6 +5,8 @@ const quit = (err) => {
 const express = require('express')
 const pug = require('pug')
 const app = express()
+const bodyParser = require("body-parser")
+app.use(bodyParser.urlencoded({ extended: false }))
 app.set('view engine', 'pug')
 
 app.get('/', function(req, res){
@@ -21,13 +23,15 @@ const server = app.listen(5000, function(err){
 })
 
 var whois = require('whois')
-const ExternalIP = "199.212.66.86";
+const getIP = require('external-ip')();
+
 const cust_id = "A6K3eXF09"
 var user = {
     'organization' : 'unknown',
     'city' : 'nowhere',
     'address' : '123 sesame street',
-    'usr_id' : 'H6L23cEf'
+    'usr_id' : 'H6L23cEf',
+    'email' : 'nobody@nowhere.ca'
 }
 
 const firebase = require('firebase')
@@ -37,20 +41,30 @@ const config = {
     databaseURL: "https://bigsad-ff378.firebaseio.com",
     storageBucket: "bigsad-ff378.appspot.com",
 }
+
 firebase.initializeApp(config)
 const database = firebase.database() //db ref
 
-app.get('/download', function(req, res){
-    //generate the user
+app.post('/download', function(req,res){
     user.email = req.body.email
-    whois.lookup(ExternalIP, function(err, data) {
-        var u = data.split('\n')
-        user.organization = u[25].split(':')[1].trim()
-        user.address = u[27].split(':')[1].trim()
-        user.city = u[28].split(':')[1].trim()
-        database.ref('data/' + cust_id).set({user})
-        //begin the download
-        //rsa encoding?
-        res.send(/* encoded data in the end*/ user)
-    })
+    doDownloadActions()
+    res.send('Thank you for downloading Transcore software.')
 })
+
+function doDownloadActions(){
+    getIP((err, ip) => {
+        if (err) {
+            throw err
+        }
+        whois.lookup(ip, function(err, data) {
+            var u = data.split('\n')
+            user.organization = u[25].split(':')[1].trim()
+            user.address = u[27].split(':')[1].trim()
+            user.city = u[28].split(':')[1].trim()
+            database.ref('data/' + cust_id).set({user})
+            console.log(user)
+            //begin the file download on the user end
+            //rsa encoding?
+        })
+    })
+}
