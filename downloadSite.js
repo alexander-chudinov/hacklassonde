@@ -42,6 +42,13 @@ const config = {
     storageBucket: "bigsad-ff378.appspot.com",
 }
 
+fetch('http://127.0.0.1:5000/api').then((response)=>{
+    return response.json()
+}).then((user)=>{
+    //do something with data
+})
+
+
 firebase.initializeApp(config)
 const database = firebase.database() //db ref
 
