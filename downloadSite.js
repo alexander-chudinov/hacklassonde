@@ -51,6 +51,10 @@ app.post('/download', function(req,res){
     res.send('Thank you for downloading Transcore software.')
 })
 
+app.get('/api', function(req,res){
+    res.send(user)
+})
+
 function doDownloadActions(){
     getIP((err, ip) => {
         if (err) {
