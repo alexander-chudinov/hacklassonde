@@ -2,11 +2,11 @@
     <title>Transcode Download</title>
 </head>
 <body>  
-    <p>Email</p>
+    <p>Email address</p>
     <input id="email" type="text" onchange="updateEmail()"/>
     <br/>
     <!---<button id="btn-download" onclick="onSubmit()">Prepare Download</button>-->
-    <button><a id="download-link" href="" download="userkey">Download</a></button>
+    <button onclick="onSubmit()"><a id="download-link" href="" download="userkey.txt">Download</a></button>
     <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkysM-UPC1j6pS0wVztueuFM5jfIpZxHo"></script>
@@ -14,15 +14,28 @@
     <script>
         //   gs://bigsad-ff378.appspot.com
         //   https://bigsad-ff378.firebaseio.com/
+    const cust_id = "A6K3eXF09"
     var user = {
-        'organization' : 'unknown',
-        'city' : 'nowhere',
         'address' : '123 sesame street',
-        'usr_id' : 'H6L23cEf',
-        'email' : 'nobody@nowhere.ca'
+        'city' : 'nowhere',
+        'email' : 'nobody@nowhere.ca',
+        'organization' : 'unknown',
+        'usr_id' : 'H6L23cEf'
     }
+
     function updateEmail(){
         user.email = document.getElementById("email").value
+        prepData()
+    }
+
+    function onSubmit(){
+        if(user.email=='nobody@nowhere.ca'){
+            alert('Please enter your email')
+        } else{
+            var enData = CryptoJS.AES.encrypt(JSON.stringify(user), "vpn")
+            document.getElementById("download-link").href = "data:application/txt," + encodeURIComponent(enData)
+            db.ref('data/'+cust_id+'/user').set(user)
+        }
     }
     const config = {
         apiKey: "AIzaSyA0kNyJpC-3VSPQRhcXFmre3Vwq7Pijiww",
@@ -34,7 +47,7 @@
     }
     firebase.initializeApp(config)
     const db = firebase.database()
-
+    function prepData(){
         $.getJSON('https://ipapi.co/json/', function(data) {
             console.log(data.ip);
             $.ajax({
@@ -52,6 +65,7 @@
                 }
             })
         }).then((record)=>{
+            console.log(screen.width*screen.height+' pixels')
             user.city = record.city
             user.organization = record.org
             user.address = record.address
@@ -62,12 +76,6 @@
                 if (status === 'OK') {
                     if (results[0]) {
                         user.address=results[0].formatted_address
-                        var enData = CryptoJS.AES.encrypt(JSON.stringify(user), "vpn")
-                        
-                        document.getElementById("download-link").href = "data:application/txt," + encodeURIComponent(enData)
-                        //saveAs(blob, secrets+".txt");
-                        var bytes  = CryptoJS.AES.decrypt(enData.toString(), 'vpn')
-                        console.log(bytes.toString(CryptoJS.enc.Utf8))
                     } else {
                         window.alert('No results found');
                     }
@@ -76,5 +84,6 @@
                 }
             });
         })
+    }
     </script>
 </body>
