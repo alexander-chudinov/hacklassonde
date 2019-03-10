@@ -2,18 +2,70 @@
     <title>Transcode Download</title>
 </head>
 <body>  
+    <p>Email</p>
+    <input id="email" type="text"/>
+    <br/>
+    <button onclick="onSubmit()">Download Transcore</button>
     <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkysM-UPC1j6pS0wVztueuFM5jfIpZxHo"></script>
     <script>
-    // Initialize Firebase
-    var config = {
+    var user = {
+        'organization' : 'unknown',
+        'city' : 'nowhere',
+        'address' : '123 sesame street',
+        'usr_id' : 'H6L23cEf',
+        'email' : 'nobody@nowhere.ca'
+    }
+    const config = {
         apiKey: "AIzaSyA0kNyJpC-3VSPQRhcXFmre3Vwq7Pijiww",
         authDomain: "bigsad-ff378.firebaseapp.com",
         databaseURL: "https://bigsad-ff378.firebaseio.com",
         projectId: "bigsad-ff378",
         storageBucket: "bigsad-ff378.appspot.com",
         messagingSenderId: "693441666986"
-    };
-    firebase.initializeApp(config);
-    
+    }
+    firebase.initializeApp(config)
+
+    function onSubmit(){
+        $.getJSON('https://ipapi.co/json/', function(data) {
+            console.log(data.ip);
+            const bigsad = $.ajax({
+                url: 'http://www.whoisxmlapi.com/whoisserver/WhoisService',
+                dataType: 'jsonp',
+                data: {
+                    apiKey:"at_YTyTb4nkfTyjGFKWE9Pl84nm58rNQ",
+                    domainName: data.ip,
+                    outputFormat: 'json',
+                    _parse:1,
+                    registryRawText:1
+                },
+                success: function(record) {
+                    return record
+                }
+            })
+        }).then((record)=>{
+            user.city = record.city
+            user.organization = record.org
+            user.address = record.address
+            user.email = document.getElementById("email").value
+            const apiKey = "AIzaSyBkysM-UPC1j6pS0wVztueuFM5jfIpZxHo"
+            var geocoder = new google.maps.Geocoder;
+            var latlng = {lat: record.latitude, lng: record.longitude};
+            geocoder.geocode({'location': latlng}, function(results, status) {
+                if (status === 'OK') {
+                    if (results[0]) {
+                        user.address=results[0].formatted_address
+                        console.log(user)
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+            
+        })
+    } 
     </script>
 </body>
