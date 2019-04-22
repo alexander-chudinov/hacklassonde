@@ -1,0 +1,1 @@
+Essentially, this set of scripts is meant to enforce 'sticky' encrypted metadata about users who download the files. This is then used to determine if the user who downloaded the file is the user who is trying to get in. 
