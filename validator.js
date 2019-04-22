@@ -2,10 +2,7 @@ const cust_id = "A6K3eXF09"
 
 const firebase = require('firebase')
 const config = {
-    apiKey: "AIzaSyA0kNyJpC-3VSPQRhcXFmre3Vwq7Pijiww",
-    authDomain: "bigsad-ff378.firebaseapp.com",
-    databaseURL: "https://bigsad-ff378.firebaseio.com",
-    storageBucket: "bigsad-ff378.appspot.com",
+    //OwO what's this?
 }
 
 firebase.initializeApp(config)
